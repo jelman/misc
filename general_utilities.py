@@ -1,4 +1,5 @@
 import os, sys
+import datetime
 from glob import glob
 import nibabel as nib
 
@@ -30,14 +31,14 @@ def make_dir(root, name = 'temp'):
         os.mkdir(outdir)  
         return outdir    
     else:
-        #If outdir exists, rename existing outdirdir with timestamp appended
+        #If outdir exists, rename existing outdir with timestamp appended
         mtime = os.path.getmtime(outdir)
         tmestamp = datetime.datetime.fromtimestamp(mtime).strftime('%Y-%m-%d_%H-%M-%S')
         newdir = '_'.join([outdir,tmestamp])
         os.rename(outdir,newdir)
         os.mkdir(outdir)
         print outdir, 'exists, moving to ', newdir
-        return newdir
+        return outdir
 
 
 def split_filename(fname):

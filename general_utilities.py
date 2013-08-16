@@ -91,5 +91,5 @@ def load_mapping(mapfile):
     with open(mapfile) as f:
         for line in f:
            (key, val) = line.split()
-           template_map[int(key)] = val
+           template_map[key] = val
     return template_map

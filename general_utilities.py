@@ -3,20 +3,27 @@ from glob import glob
 import nibabel as nib
 
 def load_nii(filename):
+    """
+    Load nifti file, returns data array and header
+    """
     img = nib.load(filename)
     dat = img.get_data()
     hdr = img.get_header()
     return dat, hdr
     
 def save_nii(outfile, data, hdr):
+    """
+    Create nifti image using data and hdr, save to outfile.
+    """    
     img = nib.Nifti1Image(data, hdr)
     img.to_filename(outfile)
     return outfile
 
 def make_dir(root, name = 'temp'):
-    """ generate dirname string
-    check if directory exists
-    return exists, dir_string
+    """ 
+    generate dirname string and check if directory exists.
+    If exists, append timestamp to dir name and create newdir.
+    Returns created directory string
     """
     outdir = os.path.join(root, name)
     if os.path.isdir(outdir)==False:
@@ -74,4 +81,14 @@ def split_filename(fname):
     return pth, name, ''.join(ext)
 
     
-
+def load_mapping(mapfile):
+    """
+    Loads text file to dictionary to map values from one column to another
+    First column will be loaded as key, second column as value
+    """
+    template_map = {}
+    with open(mapfile) as f:
+        for line in f:
+           (key, val) = line.split()
+           template_map[int(key)] = val
+    return template_map

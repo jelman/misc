@@ -9,14 +9,14 @@ def load_nii(filename):
     """
     img = nib.load(filename)
     dat = img.get_data()
-    hdr = img.get_header()
-    return dat, hdr
+    aff = img.get_affine()
+    return dat, aff
     
-def save_nii(outfile, data, hdr):
+def save_nii(outfile, data, aff):
     """
     Create nifti image using data and hdr, save to outfile.
     """    
-    img = nib.Nifti1Image(data, hdr)
+    img = nib.Nifti1Image(data, aff)
     img.to_filename(outfile)
     return outfile
 

@@ -20,3 +20,10 @@ def run_rlm(y, X, norm = sm.robust.norms.TukeyBiweight()):
         rlm_model = sm.RLM(y, X, M = norm)
         rlm_results = rlm_model.fit()
         return rlm_results
+        
+def glm(X,Y):
+    """ a simple GLM function returning the estimated parameters and residuals """
+    betah = np.linalg.pinv(X).dot(Y)
+    Yfitted = X.dot(betah)
+    resid = Y - Yfitted
+    return betah, Yfitted, resid

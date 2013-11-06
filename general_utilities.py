@@ -1,11 +1,14 @@
-import os, sys
+import os, sys, re
 import datetime
 from glob import glob
 import nibabel as nib
+import numpy as np
+import itertools
+
 
 def load_nii(filename):
     """
-    Load nifti file, returns data array and header
+    Load nifti file, returns data array and affine
     """
     img = nib.load(filename)
     dat = img.get_data()
@@ -93,3 +96,45 @@ def load_mapping(mapfile):
            (key, val) = line.split()
            template_map[key] = val
     return template_map
+    
+def get_subid(instr, pattern='B[0-9]{2}-[0-9]{3}'):
+    """regexp to find pattern in string
+    default pattern = BXX-XXX  X is [0-9]
+    """
+    m = re.search(pattern, instr)
+    try:
+        subid = m.group()
+    except:
+        print pattern, ' not found in ', instr
+        subid = None
+    return subid
+    
+def sort_nicely(l): 
+  """ 
+  Sort the given list in the way that humans expect. 
+  """ 
+  convert = lambda text: int(text) if text.isdigit() else text.lower() 
+  alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
+  l.sort( key=alphanum_key) 
+  
+  
+def flat_triu(square_array):
+    """
+    Given a square 2D array (ie. correlation matrix), returns a 1D array 
+    of the upper triangle. Does not include the diagonal.
+    """
+    return square_array[np.triu_indices_from(square_array, k=1)]
+    
+
+def square_from_combos(array1D, nnodes):
+    """
+    Given a 1D array of upper triangle and number of nodes, returns a 
+    square (symmetric) 2D array. Diagonal is 0-filled. 
+    """
+    
+    square_mat = np.zeros((nnodes,nnodes))
+    indices = list(itertools.combinations(range(nnodes), 2))
+    for i in range(len(array1D)):
+        square_mat[indices[i]] = array1D[i]
+    return square_mat + square_mat.T
+

@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import numpy as np
+import general_stats as gs
+import statsmodels as sm
 
 def plot_line(df, xticklabels, outfile, title=None):
     """
@@ -29,7 +32,7 @@ def plot_line(df, xticklabels, outfile, title=None):
     sns.despine()
     plt.savefig(outfile, dpi=300)
     
-def plot_scatter(df, x, y, covariates, xticklabels, outfile, groupvar, title=None, palette=None):
+def plot_scatter(df, x, y, covariates, outfile, groupvar=None, xlabel=None, ylabel=None, xticklabels=None, jitter=None, title=None, palette=None):
     """
     Scatter plot with partial regression lines. Takes a 
     long pandas 
@@ -54,6 +57,10 @@ def plot_scatter(df, x, y, covariates, xticklabels, outfile, groupvar, title=Non
         File path to save image to
     groupvar : str
         Name of column to determine color grouping
+    xlabel : str
+        Label for x axis (optional)
+    ylabel : str
+        Label for y axis (optional)
     title : str
         Optional title of graph
     palette : list/str
@@ -62,10 +69,11 @@ def plot_scatter(df, x, y, covariates, xticklabels, outfile, groupvar, title=Non
 
     sns.set(style="ticks", context="talk", palette='Set1')
     sns.lmplot(x, y, df, color=groupvar, 
-                x_jitter=.15, x_partial=covariates, ci=None,
+                x_jitter=jitter, x_partial=covariates, ci=None,
                 palette=palette,scatter_kws=dict(marker='o'),
                 line_kws=dict(linewidth=2))
-    plt.xticks(np.arange(7), xticklabels, size=18)
+    if xticklabels:
+        plt.xticks(np.arange(7), xticklabels, size=18)
     plt.xlabel(x, fontsize=24, labelpad=15)
     plt.ylabel(y, fontsize=24)
     plt.tick_params(direction='out', width=1)
@@ -73,6 +81,19 @@ def plot_scatter(df, x, y, covariates, xticklabels, outfile, groupvar, title=Non
     #plt.legend(loc='best', fancybox=True).get_frame().set_alpha(0.7)
     plt.subplots_adjust(top=0.92)
     lgd = plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=2, prop={'size':20})
+    sns.despine()   
+    plt.savefig(outfile, dpi=300) 
+    
+def robust_regression_plot(x, y, x_idx, outfile, xlabel=None, ylabel=None, title=None):
+    sns.set(style="ticks", context="talk")
+    f, ax = plt.subplots()
+    rlm_results = gs.run_rlm(y, x)
+    sm.graphics.regressionplots.plot_ccpr(rlm_results, x_idx, ax=ax)
+    ax.set_xlabel(xlabel, fontsize=24, labelpad=15)
+    ax.set_ylabel(ylabel, fontsize=24)
+    ax.set_title(title)
+    plt.tick_params(direction='out', width=1)
+    plt.tight_layout()
     sns.despine()   
     plt.savefig(outfile, dpi=300) 
     

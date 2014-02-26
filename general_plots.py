@@ -67,7 +67,7 @@ def plot_scatter(df, x, y, covariates, outfile, groupvar=None, xlabel=None, ylab
         Valid matplotlib palette or list of hex colors (optional)
     """
 
-    sns.set(style="ticks", context="talk", palette='Set1')
+    sns.set(style="ticks", context="talk", palette=palette)
     sns.lmplot(x, y, df, color=groupvar, 
                 x_jitter=jitter, x_partial=covariates, ci=None,
                 palette=palette,scatter_kws=dict(marker='o'),
@@ -85,6 +85,28 @@ def plot_scatter(df, x, y, covariates, outfile, groupvar=None, xlabel=None, ylab
     plt.savefig(outfile, dpi=300) 
     
 def robust_regression_plot(x, y, x_idx, outfile, xlabel=None, ylabel=None, title=None):
+    """
+    Runs robust regression on a given dependent variable and design matrix. Plots
+    results of a specified variable with covariates partialed out.
+    
+    Parameters:
+    ------------
+    x : pandas dataframe
+        m x n design matrix, where m is observations and n is variables. The 
+        intercept is not automatically included, should be contained in design.
+    y : array
+        Dependent variable to be regressed on x. 1D array or pandas Series. 
+    x_idx : int
+        Index of variable to be plotted within design matrix.
+    outfile : str
+        File path to save image to
+    xlabel : str
+        Label for x axis (optional)
+    ylabel : str
+        Label for y axis (optional)
+    title : str
+        Optional title of graph
+    """   
     sns.set(style="ticks", context="talk")
     f, ax = plt.subplots()
     rlm_results = gs.run_rlm(y, x)

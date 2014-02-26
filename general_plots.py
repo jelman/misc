@@ -29,7 +29,7 @@ def plot_line(df, xticklabels, outfile, title=None):
     sns.despine()
     plt.savefig(outfile, dpi=300)
     
-def plot_scatter(df, x, y, groupvar=None, partial, xticklabels, outfile, title=None, palette=None):
+def plot_scatter(df, x, y, groupvar, covariates, xticklabels, outfile, title=None, palette=None):
     """
     Scatter plot with partial regression lines. Takes a 
     long pandas 
@@ -46,8 +46,8 @@ def plot_scatter(df, x, y, groupvar=None, partial, xticklabels, outfile, title=N
         Name of column in dataframe to be plotted on y axis 
         (dependent variable)
     groupvar : str
-        Name of column to determine color grouping (optional)
-    partial : list
+        Name of column to determine color grouping
+    covariates : list
         List of variables in dataframe to act as covariates, 
         will be partialed out before plotting
     xticklabels : list
@@ -62,7 +62,7 @@ def plot_scatter(df, x, y, groupvar=None, partial, xticklabels, outfile, title=N
 
     sns.set(style="ticks", context="talk", palette='Set1')
     sns.lmplot(x, y, df, color=groupvar, 
-                x_jitter=.15, x_partial=partial, ci=None,
+                x_jitter=.15, x_partial=covariates, ci=None,
                 palette=palette,scatter_kws=dict(marker='o'),
                 line_kws=dict(linewidth=2))
     plt.xticks(np.arange(7), xticklabels, size=18)

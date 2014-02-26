@@ -3,6 +3,22 @@ import seaborn as sns
 import pandas as pd
 
 def plot_line(df, xticklabels, outfile, title=None):
+    """
+    Line plot with separate lines for each group. Takes a grouped
+    pandas dataframe as input.
+
+    Parameters:
+    -----------
+    df : pandas dataframe
+        Should by a grouped and aggregated dataframe. If columns 
+        are to be x axis, then needs to be transposed. 
+    xticklabels : list
+        Labels for x axis
+    outfile : str
+        File path for output image
+    title : str
+        Optional title for chart
+    """
     sns.set(style="ticks", context="poster", palette='Set1')
     ax = df.plot(title=title, marker='o')
     ax.set_ylabel('Z Score', fontweight='bold')

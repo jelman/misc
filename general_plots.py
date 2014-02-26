@@ -29,7 +29,7 @@ def plot_line(df, xticklabels, outfile, title=None):
     sns.despine()
     plt.savefig(outfile, dpi=300)
     
-def plot_scatter(df, x, y, partial, xticklabels, outfile, title=None, palette=None):
+def plot_scatter(df, x, y, groupvar=None, partial, xticklabels, outfile, title=None, palette=None):
     """
     Scatter plot with partial regression lines. Takes a 
     long pandas 
@@ -45,6 +45,8 @@ def plot_scatter(df, x, y, partial, xticklabels, outfile, title=None, palette=No
     y : str
         Name of column in dataframe to be plotted on y axis 
         (dependent variable)
+    groupvar : str
+        Name of column to determine color grouping (optional)
     partial : list
         List of variables in dataframe to act as covariates, 
         will be partialed out before plotting
@@ -59,7 +61,7 @@ def plot_scatter(df, x, y, partial, xticklabels, outfile, title=None, palette=No
     """
 
     sns.set(style="ticks", context="talk", palette='Set1')
-    sns.lmplot(x, y, df, color='Group', 
+    sns.lmplot(x, y, df, color=groupvar, 
                 x_jitter=.15, x_partial=partial, ci=None,
                 palette=palette,scatter_kws=dict(marker='o'),
                 line_kws=dict(linewidth=2))
@@ -74,7 +76,26 @@ def plot_scatter(df, x, y, partial, xticklabels, outfile, title=None, palette=No
     sns.despine()   
     plt.savefig(outfile, dpi=300) 
     
-def plot_pyplot_bar(df, error, outfile, title=None):    
+def plot_pyplot_bar(df, error, ylabel, xlabel, outfile, title=None):    
+    """
+    Bar chart of multiple groups and conditions with error bars.
+
+    Parameters:
+    -----------
+    df : pandas dataframe
+        Aggregated grouped dataframe containing means of each group
+    error : pandas dataframe
+        Aggregated grouped dataframe containing error 
+        (i.e. SD, SE) of each group
+    ylabel : str
+        y axis label
+    xlabel : str
+        x axis label
+    oufile : str
+        File path to save image
+    title : str
+        Optional title of graph
+    """
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
     #sns.set(style="darkgrid", context="poster")
@@ -90,8 +111,8 @@ def plot_pyplot_bar(df, error, outfile, title=None):
                     label=col_labels[group],
                     yerr=error.iloc[:,group],
                     error_kw=dict(capsize=5))
-    ax.set_ylabel('Z Score', fontweight='bold')
-    ax.set_xlabel('Group', fontweight='bold', labelpad=15)
+    ax.set_ylabel(ylabel, fontweight='bold')
+    ax.set_xlabel(xlabel, fontweight='bold', labelpad=15)
     ax.set_xticks(ind+width)
     ax.set_xticklabels(df.index)
     if title:
@@ -102,18 +123,4 @@ def plot_pyplot_bar(df, error, outfile, title=None):
     ax.axhline(color='black', linestyle='--')
     sns.despine()
     plt.savefig(outfile)    
-   
-def plot_pandas_bar(df, error, outfile, title=None):
-    fig = plt.figure()
-    ax = fig.add_subplot(1,1,1)
-    sns.set(style="darkgrid", context="poster", palette='Set1')
-    df.plot(kind='bar', ax=ax, sort_columns=False)
-    plt.xlabel(ax.get_xlabel(), fontweight='bold', labelpad=15)
-    ax.set_ylabel('Z Score', fontweight='bold')
-    plt.tight_layout()
-    # Shink current axis by 20%
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-    # Put a legend to the right of the current axis
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), fancybox=True)
-    plt.savefig(outfile)
+    

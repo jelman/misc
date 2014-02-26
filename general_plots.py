@@ -65,6 +65,9 @@ def plot_scatter(df, x, y, covariates, outfile, groupvar=None, xlabel=None, ylab
         Optional title of graph
     palette : list/str
         Valid matplotlib palette or list of hex colors (optional)
+        
+    Note: Legend is placed along top of chart in two columns. This may
+        need to be changed.
     """
 
     sns.set(style="ticks", context="talk", palette=palette)
@@ -74,13 +77,15 @@ def plot_scatter(df, x, y, covariates, outfile, groupvar=None, xlabel=None, ylab
                 line_kws=dict(linewidth=2))
     if xticklabels:
         plt.xticks(np.arange(7), xticklabels, size=18)
-    plt.xlabel(x, fontsize=24, labelpad=15)
-    plt.ylabel(y, fontsize=24)
+    plt.xlabel(xlabel, fontsize=20, labelpad=15)
+    plt.ylabel(ylabel, fontsize=20)
+    plt.title(title, fontsize=20)
     plt.tick_params(direction='out', width=1)
     plt.tight_layout()
     #plt.legend(loc='best', fancybox=True).get_frame().set_alpha(0.7)
     plt.subplots_adjust(top=0.92)
-    lgd = plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=2, prop={'size':20})
+    lgd = plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), 
+                        ncol=2, prop={'size':20})
     sns.despine()   
     plt.savefig(outfile, dpi=300) 
     

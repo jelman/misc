@@ -1,0 +1,6 @@
+Universe = vanilla 
+Executable = $(filename)
+Error = log/job.err.$(Cluster)-$(Process) 
+Output = log/job.out.$(Cluster)-$(Process) 
+Log = log/job.log.$(Cluster) 
+Queue filename matching files /path/to/scripts/run_*

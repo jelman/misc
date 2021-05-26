@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #################################################################################################
 # Script to create indvidual condor jobs
 #
@@ -11,6 +12,7 @@ OUTPUT=/path/to/output
 SCRIPTDIR=/path/to/scripts
 
 # Loop over all subjects
+
 for SUBJECT in `cat path/to/subject_list.txt`
 do
 	

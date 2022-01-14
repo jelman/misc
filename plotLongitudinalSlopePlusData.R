@@ -44,7 +44,8 @@ p + geom_line(data=dflong, aes(x=cage, y=adjHippocampus, group = VETSAID), alpha
 ##############################################################################
 
 
-# Get predicted values from model for fixed effects
+# Get predicted values from model for fixed effects. 
+# If you want variance of the random effects, include type='random'
 preddf = ggpredict(fit.afqt, terms="age")
 preddf = data.frame(preddf)
 
@@ -54,14 +55,14 @@ me <- ggpredict(fit.afqt, terms = c("age","CASE", "VETSAID"), type = "re")
 me = data.frame(me)
 
 # We only want combinations of VETSAID and CASE that actually exist, filter matches
-me = me %>% rename(VETSAID=facet) %>% 
-  mutate(CASE = gsub("[A|B]","",VETSAID)) %>%
-  filter(group==CASE)
+vetsaid_case = unique(paste(df$VETSAID, df$CASE, sep="_"))
+me$VETSAID_CASE = paste(me$facet, me$group, sep="_")
+me = me %>% filter(VETSAID_CASE %in% vetsaid_case)
 
 
-# Plot individual slopes and then fixed effect estimate on top
+# Plot individual slopes and then fixed effect estimate with 95% CI on top
 p = ggplot() + 
-  geom_line(data=me, aes(x=x, y=predicted, group = VETSAID), alpha=.1) +
+  geom_line(data=me, aes(x=x, y=predicted, group = VETSAID_CASE), alpha=.1) +
   geom_line(data=preddf, aes(x=x, y=predicted), color="firebrick", size=2) + 
   geom_ribbon(data=preddf, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .5, fill="firebrick") +
   xlab("Age") + ylab("AFQT") + theme_sjplot(16)

@@ -30,3 +30,38 @@ p + geom_line(data=dflong, aes(x=cage, y=adjHippocampus, group = VETSAID), alpha
   xlab("Age (centered)") + ylab("Hippocampus") + 
   sjPlot::theme_sjplot(16)
   
+
+
+################################################################################
+# Example of how to plot fixed effects along with predicted 
+# subject-specific slopes (as opposed to raw data). This example 
+# iuncludes random slopes with nested random intercept:
+#
+# fit.afqt = lmer(afqt ~ age + (1 + age|VETSAID) + (1|CASE/VETSAID), data=df)
+# 
+# It should be easy to modify if random slope is dropped or intercept 
+# is not nested.
+##############################################################################
+
+
+# Get predicted values from model for fixed effects
+preddf = ggpredict(fit.afqt, terms="age")
+preddf = data.frame(preddf)
+
+# Get predicted values of int and slope for all subjects
+# NOTE: This produces combos of random effects (i.e., every combom of CASE and VETSAID)
+me <- ggpredict(fit.afqt, terms = c("age","CASE", "VETSAID"), type = "re")
+me = data.frame(me)
+
+# We only want combinations of VETSAID and CASE that actually exist, filter matches
+me = me %>% rename(VETSAID=facet) %>% 
+  mutate(CASE = gsub("[A|B]","",VETSAID)) %>%
+  filter(group==CASE)
+
+
+# Plot individual slopes and then fixed effect estimate on top
+p = ggplot() + 
+  geom_line(data=me, aes(x=x, y=predicted, group = VETSAID), alpha=.1) +
+  geom_line(data=preddf, aes(x=x, y=predicted), color="firebrick", size=2) + 
+  geom_ribbon(data=preddf, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .5, fill="firebrick") +
+  xlab("Age") + ylab("AFQT") + theme_sjplot(16)
